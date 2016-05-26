@@ -1,0 +1,11 @@
+/_build
+/cover
+/deps
+erl_crash.dump
+*.ez
+
+/config/secrets.exs
+/config/*.secret.exs
+
+# avoid committing slack exports
+/priv
