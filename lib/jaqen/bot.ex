@@ -12,12 +12,13 @@ defmodule Jaqen.Bot do
     {:ok, state}
   end
 
-  def handle_message(%{type: "message"} = message, slack, state) do
-    info "#{message.text} from #{message.channel}"
+  def handle_message(%{type: "message", text: text} = message, slack, state) do
+    info "#{text} from #{message.channel}"
 
     case message |> Jaqen.NaiveAi.answer(slack) do
-      :skip    -> nil
-      response -> send_raw(response, slack)
+      {:ok, :web_socket, response} -> via_web_socket(response, slack)
+      {:ok, :web_api,    response} -> via_web_api(response)
+      :skip                        -> nil
     end
 
     {:ok, state ++ [message.text]}
@@ -25,5 +26,16 @@ defmodule Jaqen.Bot do
 
   def handle_message(message, slack, state) do
     {:ok, state}
+  end
+
+  defp via_web_socket(response, slack) do
+    response
+    |> Poison.encode!
+    |> send_raw(slack)
+  end
+
+  defp via_web_api(response) do
+    "https://slack.com/api/chat.postMessage"
+    |> HTTPoison.get!(%{}, params: response)
   end
 end

@@ -37,4 +37,3 @@ defmodule Jaqen.ChatRegistry do
     end
   end
 end
-
