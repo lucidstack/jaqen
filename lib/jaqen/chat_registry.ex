@@ -14,6 +14,10 @@ defmodule Jaqen.ChatRegistry do
     {:ok, sentences_by_user}
   end
 
+  def all(user_id) do
+    GenServer.call(__MODULE__, {:all, user_id})
+  end
+
   def random(user_id) do
     GenServer.call(__MODULE__, {:random, user_id})
   end
@@ -22,6 +26,15 @@ defmodule Jaqen.ChatRegistry do
     GenServer.call(__MODULE__, {:markov, user_id})
   end
 
+  # GenServer implementation
+  ##########################
+
+  def handle_call({:all, user_id}, _from, state) do
+    case state[user_id] do
+      nil      -> {:reply, {:error, :user_not_found}, state}
+      messages -> {:reply, Enum.join(messages, " "),  state}
+    end
+  end
 
   def handle_call({:random, user_id}, _from, state) do
     case state[user_id] do
