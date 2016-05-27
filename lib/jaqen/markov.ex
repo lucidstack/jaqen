@@ -5,7 +5,7 @@ defmodule Jaqen.Markov do
     tmp_path = "/tmp/jaqen_#{:rand.uniform(1000)}"
 
     File.write(tmp_path, input)
-    markoved = case System.cmd("marky_markov", ["speak", "-s", tmp_path, "-c", "2"]) do
+    markoved = case System.cmd("marky_markov", ["speak", "-s", tmp_path, "-c", "#{:rand.uniform(5)}"]) do
       {markoved, 0} ->
         markoved
       {_,  code} ->
